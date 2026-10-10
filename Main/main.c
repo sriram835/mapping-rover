@@ -1,0 +1,42 @@
+#include "my_platform.h"
+#include "vl53l0x_api.h"
+#include "servo.h"
+
+
+volatile uint8_t response[20];
+volatile uint8_t request[20];
+
+volatile uint8_t response_received = 0;
+volatile uint8_t response_error = 0;
+
+
+
+VL53L0X_RangingMeasurementData_t ranging_data;
+volatile uint16_t distance;
+
+int main(void){
+	init_func();
+	servo_ping(1);
+	uint8_t servo_id = 1;
+	uint16_t servo_pos = 0;
+	uint16_t servo_time = 0;
+	uint16_t servo_speed = 1000;
+	
+	
+	
+	
+	while(1){
+		        VL53L0X_PerformSingleRangingMeasurement(
+            &dev,
+            &ranging_data
+        );
+				distance = ranging_data.RangeMilliMeter;
+				delay_ms(10);
+				servo_set_position(servo_id,servo_pos,servo_time,servo_speed);
+				servo_pos+=22;
+
+	}
+	
+	
+}
+

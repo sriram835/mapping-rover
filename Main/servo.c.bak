@@ -1,0 +1,406 @@
+#include "servo.h"
+
+void servo_init(void){
+	
+
+// -------------------- Enabling Clock below ------------------------ //
+
+	/*
+	* -----------------------------------------------------
+	* 1. Enable HSI
+	*
+	* HSI = 16 MHz
+	* -----------------------------------------------------
+	*/
+
+	RCC->CR |= RCC_CR_HSION;
+
+	while (!(RCC->CR & RCC_CR_HSIRDY))
+	{
+	}
+
+
+	/*
+	* -----------------------------------------------------
+	* 2. Temporarily use HSI as SYSCLK
+	*
+	* This makes the function independent of whatever
+	* clock source the startup code previously selected.
+	* -----------------------------------------------------
+	*/
+
+	RCC->CFGR &= ~RCC_CFGR_SW;
+
+	while ((RCC->CFGR & RCC_CFGR_SWS) != RCC_CFGR_SWS_HSI)
+	{
+	}
+
+
+	/*
+	* -----------------------------------------------------
+	* 3. Configure bus prescalers
+	*
+	* HCLK  = SYSCLK / 1 = 84 MHz
+	* APB1  = HCLK   / 2 = 42 MHz
+	* APB2  = HCLK   / 1 = 84 MHz
+	* -----------------------------------------------------
+	*/
+
+	RCC->CFGR &= ~(RCC_CFGR_HPRE |
+						 RCC_CFGR_PPRE1 |
+						 RCC_CFGR_PPRE2);
+
+	RCC->CFGR |= RCC_CFGR_HPRE_DIV1;
+	RCC->CFGR |= RCC_CFGR_PPRE1_DIV2;
+	RCC->CFGR |= RCC_CFGR_PPRE2_DIV1;
+
+
+	/*
+	* -----------------------------------------------------
+	* 4. Enable PWR peripheral
+	* -----------------------------------------------------
+	*/
+
+	RCC->APB1ENR |= RCC_APB1ENR_PWREN;
+
+
+	/*
+	* -----------------------------------------------------
+	* 5. Voltage scaling
+	*
+	* Scale 2 is suitable for 84 MHz on STM32F401.
+	* -----------------------------------------------------
+	*/
+
+	PWR->CR &= ~PWR_CR_VOS;
+
+	/*
+	* On STM32F401, VOS = 01 corresponds to Scale 2.
+	*/
+	PWR->CR |= PWR_CR_VOS_1;
+
+
+	/*
+	* -----------------------------------------------------
+	* 6. Configure Flash
+	*
+	* 84 MHz requires 2 wait states.
+	* -----------------------------------------------------
+	*/
+
+	FLASH->ACR =
+	FLASH_ACR_ICEN |
+	FLASH_ACR_DCEN |
+	FLASH_ACR_PRFTEN |
+	FLASH_ACR_LATENCY_2WS;
+
+
+	/*
+	* -----------------------------------------------------
+	* 7. Configure PLL
+	*
+	* HSI = 16 MHz
+	*
+	* PLLM = 8
+	* PLLN = 84
+	* PLLP = 2
+	*
+	* VCO input:
+	*
+	*     16 / 8 = 2 MHz
+	*
+	* VCO:
+	*
+	*     2 * 84 = 168 MHz
+	*
+	* SYSCLK:
+	*
+	*     168 / 2 = 84 MHz
+	*
+	* PLLQ = 7
+	* -----------------------------------------------------
+	*/
+
+	RCC->PLLCFGR =
+	(8U  << 0)    /* PLLM = 8 */
+	| (84U << 6)    /* PLLN = 84 */
+	| (0U  << 16)   /* PLLP = /2 */
+	| (7U  << 24);  /* PLLQ = /7 */
+	/*
+	* PLLSRC = HSI
+	*
+	* Bit cleared = HSI
+	*/
+	RCC->PLLCFGR &= ~RCC_PLLCFGR_PLLSRC;
+
+
+	/*
+	* -----------------------------------------------------
+	* 8. Enable PLL
+	* -----------------------------------------------------
+	*/
+
+	RCC->CR |= RCC_CR_PLLON;
+
+	while (!(RCC->CR & RCC_CR_PLLRDY))
+	{
+	}
+
+
+	/*
+	* -----------------------------------------------------
+	* 9. Switch SYSCLK to PLL
+	* -----------------------------------------------------
+	*/
+
+	RCC->CFGR &= ~RCC_CFGR_SW;
+
+	RCC->CFGR |= RCC_CFGR_SW_PLL;
+
+	while ((RCC->CFGR & RCC_CFGR_SWS) != RCC_CFGR_SWS_PLL)
+	{
+	}
+
+
+	/*
+	* At this point:
+	*
+	* SYSCLK = 84 MHz
+	* HCLK   = 84 MHz
+	* APB1   = 42 MHz
+	* APB2   = 84 MHz
+	*/
+
+		
+		
+// -------------------- Enabling GPIO UART below ------------------------ //
+		
+	/*
+	* Enable GPIOA clock
+	*/
+	RCC->AHB1ENR |= RCC_AHB1ENR_GPIOAEN;
+
+
+	/*
+	* PA9:
+	*
+	* USART1_TX
+	* Alternate Function 7
+	*/
+
+
+	/*
+	* MODER:
+	*
+	* PA9 = Alternate Function = 10
+	*/
+
+	GPIOA->MODER &= ~(3U << (9 * 2));
+
+	GPIOA->MODER |= (2U << (9 * 2));
+
+
+	/*
+	* Output type:
+	*
+	* Open drain
+	*
+	* Important for a single-wire half-duplex bus.
+	*/
+
+	GPIOA->OTYPER &= ~(1U << 9);
+
+	//GPIOA->OTYPER |= (1U << 9);
+
+
+	/*
+	* Pull-up
+	*
+	* PA9 idle state should be HIGH.
+	*/
+
+	GPIOA->PUPDR &= ~(3U << (9 * 2));
+
+	GPIOA->PUPDR |= (1U << (9 * 2));
+
+
+	/*
+	* High speed
+	*/
+
+	GPIOA->OSPEEDR &= ~(3U << (9 * 2));
+
+	GPIOA->OSPEEDR |= (3U << (9 * 2));
+
+
+	/*
+	* Alternate function 7
+	*
+	* AFR[1] controls PA8..PA15.
+	*
+	* PA9 is AFR[1] bits 7:4.
+	*/
+
+	GPIOA->AFR[1] &= ~(0xFU << 4);
+
+	GPIOA->AFR[1] |= (7U << 4);
+		
+		
+
+// -------------------- Enabling UART below ------------------------ //
+
+	/*
+	* Enable USART1 clock
+	*/
+	RCC->APB2ENR |= RCC_APB2ENR_USART1EN;
+
+
+	/*
+	* Disable USART before configuration.
+	*/
+
+	USART1->CR1 = 0;
+	USART1->CR2 = 0;
+	USART1->CR3 = 0;
+
+
+	/*
+	* -----------------------------------------------------
+	* Baud rate
+	*
+	* PCLK2 = 84 MHz
+	*
+	* Desired baud = 1 MHz
+	*
+	* With oversampling by 16:
+	*
+	* USARTDIV = 84 MHz / 1 MHz
+	*          = 84
+	*
+	* Therefore:
+	*
+	* BRR = 84 = 0x0054
+	* -----------------------------------------------------
+	*/
+
+	USART1->BRR = 84;
+
+
+	/*
+	* -----------------------------------------------------
+	* Half-duplex mode
+	*
+	* TX and RX internally connected.
+	* -----------------------------------------------------
+	*/
+
+	USART1->CR3 |= USART_CR3_HDSEL;
+
+
+	/*
+	* -----------------------------------------------------
+	* Disabling transmitter and receiver
+	* -----------------------------------------------------
+	*/
+
+	USART1->CR1 &= ~USART_CR1_TE;
+	USART1->CR1 &= ~USART_CR1_RE;
+
+
+	/*
+	* Enable USART
+	*/
+
+	USART1->CR1 |= USART_CR1_UE;
+
+
+	/*
+	* Wait until USART is enabled
+	*/
+
+	while (!(USART1->CR1 & USART_CR1_UE)){}
+}
+
+
+void servo_USART1_SendByte(uint8_t data)
+{
+	/*
+	 * Wait until transmit data register is empty.
+	 */
+
+	while (!(USART1->SR & USART_SR_TXE)){}
+
+	USART1->DR = data;
+}
+
+uint8_t servo_get_checksum(int size){
+	int checksum = 0;
+	
+	for (int i = 0; i < size; i++){
+		checksum+=request[i];
+	}
+	
+	uint8_t res = 0;
+	
+	checksum=~checksum;
+	res = checksum & (255U << 0);
+	return res;
+}
+
+
+void servo_clear_old_rx(void){
+	while (USART1->SR & USART_SR_RXNE)
+	{
+		volatile uint8_t dummy = USART1->DR;
+		(void)dummy;
+	}
+}
+
+void servo_enable_tx(void){
+
+	// Disable receiver
+	USART1->CR1 &= ~USART_CR1_RE;
+	// Enable transmitter
+	USART1->CR1 |= USART_CR1_TE;
+	
+}
+void servo_enable_rx(void){
+
+	// Enable receiver
+	USART1->CR1 |= USART_CR1_RE;
+	// Disable transmitter
+	USART1->CR1 &= ~USART_CR1_TE;
+	
+}
+
+void servo_disable_rx_tx(void){
+
+	// Disable receiver
+	USART1->CR1 &= ~USART_CR1_RE;
+	// Disable transmitter
+	USART1->CR1 &= ~USART_CR1_TE;
+	
+}
+
+void servo_ping(uint8_t id){
+	request[0] = 0xFF;
+	request[1] = 0xFF;
+	request[2] = id;
+	request[3] = 0x02;
+	request[4] = 0x01;
+	request[5] = servo_get_checksum(5);
+
+	servo_enable_tx();
+	servo_clear_old_rx();
+	
+	for (int i = 0;i < 6; i++) servo_USART1_SendByte(request[i]);
+	while (!(USART1->SR & USART_SR_TC)){}
+		
+	servo_disable_rx_tx();
+	servo_clear_old_rx();
+	servo_enable_rx();
+	
+	
+}
+
+
