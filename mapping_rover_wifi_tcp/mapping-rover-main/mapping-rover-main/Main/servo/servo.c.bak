@@ -1,0 +1,116 @@
+#include "servo.h"
+
+
+
+void servo_USART1_SendByte(uint8_t data)
+{
+	/*
+	 * Wait until transmit data register is empty.
+	 */
+
+	while (!(USART1->SR & USART_SR_TXE)){}
+
+	USART1->DR = data;
+}
+
+uint8_t servo_get_checksum(int size){
+	int checksum = 0;
+	
+	for (int i = 2; i < size; i++){
+		checksum+=request[i];
+	}
+	
+	uint8_t res = 0;
+	
+	checksum=~checksum;
+	res = checksum & (255U << 0);
+	return res;
+}
+
+
+void servo_clear_old_rx(void){
+	while (USART1->SR & USART_SR_RXNE)
+	{
+		volatile uint8_t dummy = USART1->DR;
+		(void)dummy;
+	}
+}
+
+void servo_enable_tx(void){
+
+	// Disable receiver
+	USART1->CR1 &= ~USART_CR1_RE;
+	// Enable transmitter
+	USART1->CR1 |= USART_CR1_TE;
+	
+}
+void servo_enable_rx(void){
+
+	// Enable receiver
+	USART1->CR1 |= USART_CR1_RE;
+	// Disable transmitter
+	USART1->CR1 &= ~USART_CR1_TE;
+	
+}
+
+void servo_disable_rx_tx(void){
+
+	// Disable receiver
+	USART1->CR1 &= ~USART_CR1_RE;
+	// Disable transmitter
+	USART1->CR1 &= ~USART_CR1_TE;
+	
+}
+
+int servo_receive_response(void)
+{
+	return 0;
+}
+
+void servo_ping(uint8_t id){
+	request[0] = 0xFF;
+	request[1] = 0xFF;
+	request[2] = id;
+	request[3] = 0x02;
+	request[4] = 0x01;
+	request[5] = servo_get_checksum(5);
+
+	servo_enable_tx();
+	servo_clear_old_rx();
+	
+	for (int i = 0;i < 6; i++) servo_USART1_SendByte(request[i]);
+	while (!(USART1->SR & USART_SR_TC)){}
+		
+	servo_disable_rx_tx();
+	servo_clear_old_rx();
+	servo_enable_rx();
+	
+		for (int i = 0; i < 6; i++){
+			
+        while (!(USART1->SR & USART_SR_RXNE))
+        {
+            /*
+             * If an overrun, framing, noise, or parity error
+             * happens, record it.
+             */
+
+            if (USART1->SR &
+                (USART_SR_ORE |
+                 USART_SR_FE  |
+                 USART_SR_NE  |
+                 USART_SR_PE))
+            {
+                response_error = 1;
+            }
+        }
+
+
+        /*
+         * Read received byte.
+         */
+
+        response[i] = (uint8_t)USART1->DR;
+		}
+}
+
+

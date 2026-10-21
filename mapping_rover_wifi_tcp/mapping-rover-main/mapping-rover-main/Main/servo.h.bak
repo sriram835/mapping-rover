@@ -1,0 +1,20 @@
+#include <stm32f4xx.h>
+
+volatile uint8_t response[20];
+volatile uint8_t request[20];
+
+
+volatile uint8_t response_received = 0;
+volatile uint8_t response_error = 0;
+
+void servo_init(void);
+void servo_USART1_SendByte(uint8_t data);
+
+uint8_t servo_get_checksum(int size);
+
+void servo_enable_tx(void);
+void servo_disable_rx_tx(void)
+void servo_clear_old_rx(void);
+
+
+void servo_ping(uint8_t id);

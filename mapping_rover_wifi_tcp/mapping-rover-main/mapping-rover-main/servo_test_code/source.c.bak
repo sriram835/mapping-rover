@@ -1,0 +1,688 @@
+#include "stm32f4xx.h"
+
+/*
+ * STM32F401CCU6
+ *
+ * Clock:
+ *   HSI      = 16 MHz
+ *   SYSCLK   = 84 MHz
+ *   HCLK     = 84 MHz
+ *   APB1     = 42 MHz
+ *   APB2     = 84 MHz
+ *
+ * USART1:
+ *   PA9
+ *   1,000,000 baud
+ *   8 data bits
+ *   No parity
+ *   1 stop bit
+ *   Half duplex
+ *
+ * ST3215:
+ *   Signal -> PA9
+ *   GND    -> STM32 GND
+ *   VCC    -> external servo supply
+ *
+ * PING:
+ *   FF FF 01 02 01 FB
+ *
+ * Expected response:
+ *   FF FF 01 02 00 FC
+ */
+
+
+/* =========================================================
+   Global variables
+   ========================================================= */
+
+volatile uint8_t response[6];
+
+volatile uint8_t response_received = 0;
+volatile uint8_t response_error = 0;
+
+uint16_t position = 0;
+
+/* =========================================================
+   Small delay
+   ========================================================= */
+
+void delay_ms(uint32_t ms)
+{
+    /*
+     * At 84 MHz this is only an approximate delay.
+     * It is sufficient for giving the servo time to power up.
+     */
+    for (uint32_t i = 0; i < ms; i++)
+    {
+        for (volatile uint32_t j = 0; j < 8400; j++)
+        {
+            __NOP();
+        }
+    }
+}
+
+
+/* =========================================================
+   CLOCK
+   ========================================================= */
+
+void Clock_Init(void)
+{
+    /*
+     * -----------------------------------------------------
+     * 1. Enable HSI
+     *
+     * HSI = 16 MHz
+     * -----------------------------------------------------
+     */
+
+    RCC->CR |= RCC_CR_HSION;
+
+    while (!(RCC->CR & RCC_CR_HSIRDY))
+    {
+    }
+
+
+    /*
+     * -----------------------------------------------------
+     * 2. Temporarily use HSI as SYSCLK
+     *
+     * This makes the function independent of whatever
+     * clock source the startup code previously selected.
+     * -----------------------------------------------------
+     */
+
+    RCC->CFGR &= ~RCC_CFGR_SW;
+
+    while ((RCC->CFGR & RCC_CFGR_SWS) != RCC_CFGR_SWS_HSI)
+    {
+    }
+
+
+    /*
+     * -----------------------------------------------------
+     * 3. Configure bus prescalers
+     *
+     * HCLK  = SYSCLK / 1 = 84 MHz
+     * APB1  = HCLK   / 2 = 42 MHz
+     * APB2  = HCLK   / 1 = 84 MHz
+     * -----------------------------------------------------
+     */
+
+    RCC->CFGR &= ~(RCC_CFGR_HPRE |
+                   RCC_CFGR_PPRE1 |
+                   RCC_CFGR_PPRE2);
+
+    RCC->CFGR |= RCC_CFGR_HPRE_DIV1;
+    RCC->CFGR |= RCC_CFGR_PPRE1_DIV2;
+    RCC->CFGR |= RCC_CFGR_PPRE2_DIV1;
+
+
+    /*
+     * -----------------------------------------------------
+     * 4. Enable PWR peripheral
+     * -----------------------------------------------------
+     */
+
+    RCC->APB1ENR |= RCC_APB1ENR_PWREN;
+
+
+    /*
+     * -----------------------------------------------------
+     * 5. Voltage scaling
+     *
+     * Scale 2 is suitable for 84 MHz on STM32F401.
+     * -----------------------------------------------------
+     */
+
+    PWR->CR &= ~PWR_CR_VOS;
+
+    /*
+     * On STM32F401, VOS = 01 corresponds to Scale 2.
+     */
+    PWR->CR |= PWR_CR_VOS_1;
+
+
+    /*
+     * -----------------------------------------------------
+     * 6. Configure Flash
+     *
+     * 84 MHz requires 2 wait states.
+     * -----------------------------------------------------
+     */
+
+    FLASH->ACR =
+        FLASH_ACR_ICEN |
+        FLASH_ACR_DCEN |
+        FLASH_ACR_PRFTEN |
+        FLASH_ACR_LATENCY_2WS;
+
+
+    /*
+     * -----------------------------------------------------
+     * 7. Configure PLL
+     *
+     * HSI = 16 MHz
+     *
+     * PLLM = 8
+     * PLLN = 84
+     * PLLP = 2
+     *
+     * VCO input:
+     *
+     *     16 / 8 = 2 MHz
+     *
+     * VCO:
+     *
+     *     2 * 84 = 168 MHz
+     *
+     * SYSCLK:
+     *
+     *     168 / 2 = 84 MHz
+     *
+     * PLLQ = 7
+     * -----------------------------------------------------
+     */
+
+RCC->PLLCFGR =
+      (8U  << 0)    /* PLLM = 8 */
+    | (84U << 6)    /* PLLN = 84 */
+    | (0U  << 16)   /* PLLP = /2 */
+    | (7U  << 24);  /* PLLQ = /7 */
+    /*
+     * PLLSRC = HSI
+     *
+     * Bit cleared = HSI
+     */
+    RCC->PLLCFGR &= ~RCC_PLLCFGR_PLLSRC;
+
+
+    /*
+     * -----------------------------------------------------
+     * 8. Enable PLL
+     * -----------------------------------------------------
+     */
+
+    RCC->CR |= RCC_CR_PLLON;
+
+    while (!(RCC->CR & RCC_CR_PLLRDY))
+    {
+    }
+
+
+    /*
+     * -----------------------------------------------------
+     * 9. Switch SYSCLK to PLL
+     * -----------------------------------------------------
+     */
+
+    RCC->CFGR &= ~RCC_CFGR_SW;
+
+    RCC->CFGR |= RCC_CFGR_SW_PLL;
+
+    while ((RCC->CFGR & RCC_CFGR_SWS) != RCC_CFGR_SWS_PLL)
+    {
+    }
+
+
+    /*
+     * At this point:
+     *
+     * SYSCLK = 84 MHz
+     * HCLK   = 84 MHz
+     * APB1   = 42 MHz
+     * APB2   = 84 MHz
+     */
+}
+
+
+/* =========================================================
+   USART1 GPIO
+   ========================================================= */
+
+void USART1_GPIO_Init(void)
+{
+    /*
+     * Enable GPIOA clock
+     */
+    RCC->AHB1ENR |= RCC_AHB1ENR_GPIOAEN;
+
+
+    /*
+     * PA9:
+     *
+     * USART1_TX
+     * Alternate Function 7
+     */
+
+
+    /*
+     * MODER:
+     *
+     * PA9 = Alternate Function = 10
+     */
+
+    GPIOA->MODER &= ~(3U << (9 * 2));
+
+    GPIOA->MODER |= (2U << (9 * 2));
+
+
+    /*
+     * Output type:
+     *
+     * Open drain
+     *
+     * Important for a single-wire half-duplex bus.
+     */
+
+    GPIOA->OTYPER &= ~(1U << 9);
+
+    //GPIOA->OTYPER |= (1U << 9);
+
+
+    /*
+     * Pull-up
+     *
+     * PA9 idle state should be HIGH.
+     */
+
+    GPIOA->PUPDR &= ~(3U << (9 * 2));
+
+    GPIOA->PUPDR |= (1U << (9 * 2));
+
+
+    /*
+     * High speed
+     */
+
+    GPIOA->OSPEEDR &= ~(3U << (9 * 2));
+
+    GPIOA->OSPEEDR |= (3U << (9 * 2));
+
+
+    /*
+     * Alternate function 7
+     *
+     * AFR[1] controls PA8..PA15.
+     *
+     * PA9 is AFR[1] bits 7:4.
+     */
+
+    GPIOA->AFR[1] &= ~(0xFU << 4);
+
+    GPIOA->AFR[1] |= (7U << 4);
+}
+
+
+/* =========================================================
+   USART1 INIT
+   ========================================================= */
+
+void USART1_Init(void)
+{
+    /*
+     * Enable USART1 clock
+     */
+    RCC->APB2ENR |= RCC_APB2ENR_USART1EN;
+
+
+    /*
+     * Disable USART before configuration.
+     */
+
+    USART1->CR1 = 0;
+    USART1->CR2 = 0;
+    USART1->CR3 = 0;
+
+
+    /*
+     * -----------------------------------------------------
+     * Baud rate
+     *
+     * PCLK2 = 84 MHz
+     *
+     * Desired baud = 1 MHz
+     *
+     * With oversampling by 16:
+     *
+     * USARTDIV = 84 MHz / 1 MHz
+     *          = 84
+     *
+     * Therefore:
+     *
+     * BRR = 84 = 0x0054
+     * -----------------------------------------------------
+     */
+
+    USART1->BRR = 84;
+
+
+    /*
+     * -----------------------------------------------------
+     * Half-duplex mode
+     *
+     * TX and RX internally connected.
+     * -----------------------------------------------------
+     */
+
+    USART1->CR3 |= USART_CR3_HDSEL;
+
+
+    /*
+     * -----------------------------------------------------
+     * Enable transmitter and receiver
+     * -----------------------------------------------------
+     */
+
+    USART1->CR1 |= USART_CR1_TE;
+    USART1->CR1 |= USART_CR1_RE;
+
+
+    /*
+     * Enable USART
+     */
+
+    USART1->CR1 |= USART_CR1_UE;
+
+
+    /*
+     * Wait until USART is enabled
+     */
+
+    while (!(USART1->CR1 & USART_CR1_UE)){}
+}
+
+
+/* =========================================================
+   USART SEND BYTE
+   ========================================================= */
+
+void USART1_SendByte(uint8_t data)
+{
+    /*
+     * Wait until transmit data register is empty.
+     */
+
+    while (!(USART1->SR & USART_SR_TXE))
+    {
+    }
+
+    USART1->DR = data;
+}
+
+
+/* =========================================================
+   ST3215 PING
+   ========================================================= */
+
+
+   uint8_t packet[13];
+
+void ST3215_Ping(uint8_t id)
+{
+ 
+
+    /*
+     * ST3215 packet:
+     *
+     * FF FF ID LENGTH INSTRUCTION CHECKSUM
+     */
+
+    packet[0] = 0xFF;
+    packet[1] = 0xFF;
+
+    packet[2] = id;
+
+    packet[3] = 0x09;
+
+    packet[4] = 0x03;
+		packet[5] = 0x2A;
+		packet[6] = position & 0xFF;       
+		packet[7] = (position >> 8) & 0xFF;
+		packet[8] = 0x00;
+		packet[9] = 0x00;
+		packet[10] = 0xE8;
+		packet[11] = 0x03;
+		uint8_t checksum = 0;
+		position+=22;
+
+		for (int i = 2; i < 12; i++)
+		{
+				checksum += packet[i];
+		}
+
+		packet[12] = ~checksum;		
+
+
+    /*
+     * Checksum:
+     *
+     * ~(ID + Length + Instruction)
+     */
+
+	/*
+    packet[5] =
+        (uint8_t)~(
+            packet[2] +
+            packet[3] +
+            packet[4]
+        );
+*/
+
+    /*
+     * Expected for ID = 1:
+     *
+     * FF FF 01 02 01 FB
+     */
+
+
+    /*
+     * Make sure receiver is enabled.
+			 */
+
+		// Disable receiver
+		USART1->CR1 &= ~USART_CR1_RE;
+
+		// Enable transmitter
+		USART1->CR1 |= USART_CR1_TE;
+
+
+    /*
+     * Clear any old RX data.
+     *
+     * If RXNE is set, reading DR clears it.
+     */
+
+    while (USART1->SR & USART_SR_RXNE)
+    {
+        volatile uint8_t dummy = USART1->DR;
+        (void)dummy;
+    }
+
+
+    /*
+     * Send packet
+     */
+
+    for (int i = 0; i < 13; i++)
+    {
+        USART1_SendByte(packet[i]);
+    }
+
+
+    /*
+     * Wait until the LAST bit has actually left
+     * the USART.
+     *
+     * TXE is not enough.
+     * TC means the complete frame is finished.
+     */
+
+    while (!(USART1->SR & USART_SR_TC))
+    {
+    }
+
+
+    /*
+     * -----------------------------------------------------
+     * Switch from TX to RX.
+     *
+     * Disable transmitter.
+     *
+     * USART half-duplex releases the PA9 line.
+     * -----------------------------------------------------
+     */
+
+    USART1->CR1 &= ~USART_CR1_TE;
+
+
+    /*
+     * Make sure receiver is enabled.
+     */
+		
+		
+    while (USART1->SR & USART_SR_RXNE)
+    {
+        volatile uint8_t dummy = USART1->DR;
+        (void)dummy;
+    }
+
+    USART1->CR1 |= USART_CR1_RE;
+}
+
+
+/* =========================================================
+   MAIN
+   ========================================================= */
+
+int main(void)
+{
+    /*
+     * =====================================================
+     * IMPORTANT:
+     *
+     * First completely establish our own clock.
+     * =====================================================
+     */
+
+    Clock_Init();
+
+
+    /*
+     * Configure PA9.
+     */
+
+    USART1_GPIO_Init();
+
+
+    /*
+     * Configure USART1.
+     */
+
+    USART1_Init();
+
+
+    /*
+     * Give the servo time to power up.
+     */
+
+    delay_ms(100);
+
+
+    /*
+     * -----------------------------------------------------
+     * Ping ST3215 ID 1.
+     *
+     * Factory default ID is 1.
+     * -----------------------------------------------------
+     */
+		
+position = 0;		
+		 while (1)
+		{
+
+
+			// Disable receiver
+		USART1->CR1 &= ~USART_CR1_RE;
+
+		// Enable transmitter
+		USART1->CR1 |= USART_CR1_TE;
+
+		ST3215_Ping(1);
+		delay_ms(1000);
+		position+=33;
+
+		/*
+		position = 2100;
+		ST3215_Ping(1);
+		delay_ms(1000);
+		*/
+		}
+		while (1) {
+
+				// Disable receiver
+		USART1->CR1 &= ~USART_CR1_RE;
+
+		// Enable transmitter
+		USART1->CR1 |= USART_CR1_TE;
+    ST3215_Ping(1);
+
+
+    /*
+     * -----------------------------------------------------
+     * Wait for exactly 6 bytes.
+     *
+     * Expected:
+     *
+     * FF FF 01 02 00 FC
+     *
+     * -----------------------------------------------------
+     */
+
+    for (int i = 0; i < 6; i++)
+    {
+        /*
+         * Wait for received byte.
+         */
+
+        while (!(USART1->SR & USART_SR_RXNE))
+        {
+            /*
+             * If an overrun, framing, noise, or parity error
+             * happens, record it.
+             */
+
+            if (USART1->SR &
+                (USART_SR_ORE |
+                 USART_SR_FE  |
+                 USART_SR_NE  |
+                 USART_SR_PE))
+            {
+                response_error = 1;
+            }
+        }
+
+
+        /*
+         * Read received byte.
+         */
+
+        response[i] = (uint8_t)USART1->DR;
+    }
+
+
+    /*
+     * If execution reaches here,
+     * six bytes were received.
+     */
+
+    response_received = 1;
+
+
+    /*
+     * Stop here so you can inspect variables in Keil.
+     */
+		
+		delay_ms(200);
+	}
+}

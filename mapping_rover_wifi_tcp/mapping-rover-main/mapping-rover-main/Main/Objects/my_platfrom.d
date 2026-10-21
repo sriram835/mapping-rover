@@ -1,0 +1,9 @@
+./objects/my_platfrom.o: Lidar_bridge\my_platfrom.c core\vl53l0x_api.h \
+  core\vl53l0x_api_strings.h core\vl53l0x_def.h core\vl53l0x_device.h \
+  platform\vl53l0x_types.h platform\vl53l0x_platform.h \
+  platform\vl53l0x_platform_log.h platform\vl53l0x_i2c_platform.h \
+  C:\Users\Sri\ Ram\AppData\Local\Arm\Packs\Keil\STM32F4xx_DFP\2.8.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include\stm32f4xx.h \
+  C:\Users\Sri\ Ram\AppData\Local\Arm\Packs\Keil\STM32F4xx_DFP\2.8.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include\stm32f401xc.h \
+  C:\Users\Sri\ Ram\AppData\Local\Arm\Packs\ARM\CMSIS\6.4.0\CMSIS\Core\Include\core_cm4.h \
+  C:\Users\Sri\ Ram\AppData\Local\Arm\Packs\Keil\STM32F4xx_DFP\2.8.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include\system_stm32f4xx.h \
+  Lidar_bridge\my_platform.h

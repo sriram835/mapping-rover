@@ -429,7 +429,7 @@
                   <MiscControls></MiscControls>
                   <Define></Define>
                   <Undefine></Undefine>
-                  <IncludePath>..\Main;.\platform;.\core;.\Lidar_bridge</IncludePath>
+                  <IncludePath>..\Main;.\platform;.\core;.\Lidar_bridge;.\servo</IncludePath>
                 </VariousControls>
               </Cads>
               <Aads>

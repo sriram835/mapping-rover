@@ -1,0 +1,148 @@
+Dependencies for Project 'project_main', Target 'Target_1': (DO NOT MODIFY !)
+CompilerVersion: 6240000::V6.24::ARMCLANG
+F (.\main.c)(0x6AD77072)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-D__EVAL -gdwarf-4 -O0 -ffunction-sections -Wall -Wextra -Wno-packed -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ./Wifi -I ../Main -I ./platform -I ./core -I ./Lidar_bridge -I ./servo -I ./Wifi -I ./core -I ./platform -I ./Lidar_bridge -I ./Wifi-I./RTE/_Target_1-I"C:/Users/Sri Ram/AppData/Local/Arm/Packs/ARM/CMSIS/6.4.0/CMSIS/Core/Include"-I"C:/Users/Sri Ram/AppData/Local/Arm/Packs/Keil/STM32F4xx_DFP/2.8.0/Drivers/CMSIS/Device/ST/STM32F4xx/Include"-D__UVISION_VERSION="543" -DSTM32F401xC -D_RTE_-o ./objects/main.o -MMD)
+I (Lidar_bridge\my_platform.h)(0x6AD321E4)
+I (C:\Users\Sri Ram\AppData\Local\Arm\Packs\Keil\STM32F4xx_DFP\2.8.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include\stm32f4xx.h)(0x6AD73CE1)
+I (C:\Users\Sri Ram\AppData\Local\Arm\Packs\Keil\STM32F4xx_DFP\2.8.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include\stm32f401xc.h)(0x6AD73CE1)
+I (C:\Users\Sri Ram\AppData\Local\Arm\Packs\ARM\CMSIS\6.4.0\CMSIS\Core\Include\core_cm4.h)(0x6AD73518)
+I (C:\Users\Sri Ram\AppData\Local\Arm\Packs\Keil\STM32F4xx_DFP\2.8.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include\system_stm32f4xx.h)(0x6AD73CE1)
+I (platform\vl53l0x_i2c_platform.h)(0x6AD321E4)
+I (core\vl53l0x_def.h)(0x6AD321E4)
+I (core\vl53l0x_device.h)(0x6AD321E4)
+I (platform\vl53l0x_types.h)(0x6AD321E4)
+I (core\vl53l0x_api.h)(0x6AD321E4)
+I (core\vl53l0x_api_strings.h)(0x6AD321E4)
+I (platform\vl53l0x_platform.h)(0x6AD321E4)
+I (platform\vl53l0x_platform_log.h)(0x6AD321E4)
+I (servo\servo.h)(0x6AD321E4)
+F (.\servo\servo.h)(0x6AD321E4)()
+F (.\servo\servo.c)(0x6AD321E4)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-D__EVAL -gdwarf-4 -O0 -ffunction-sections -Wall -Wextra -Wno-packed -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ./core -I ./platform -I ./Lidar_bridge -I ./Wifi-I./RTE/_Target_1-I"C:/Users/Sri Ram/AppData/Local/Arm/Packs/ARM/CMSIS/6.4.0/CMSIS/Core/Include"-I"C:/Users/Sri Ram/AppData/Local/Arm/Packs/Keil/STM32F4xx_DFP/2.8.0/Drivers/CMSIS/Device/ST/STM32F4xx/Include"-D__UVISION_VERSION="543" -DSTM32F401xC -D_RTE_-o ./objects/servo.o -MMD)
+I (servo\servo.h)(0x6AD321E4)
+I (C:\Users\Sri Ram\AppData\Local\Arm\Packs\Keil\STM32F4xx_DFP\2.8.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include\stm32f4xx.h)(0x6AD73CE1)
+I (C:\Users\Sri Ram\AppData\Local\Arm\Packs\Keil\STM32F4xx_DFP\2.8.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include\stm32f401xc.h)(0x6AD73CE1)
+I (C:\Users\Sri Ram\AppData\Local\Arm\Packs\ARM\CMSIS\6.4.0\CMSIS\Core\Include\core_cm4.h)(0x6AD73518)
+I (C:\Users\Sri Ram\AppData\Local\Arm\Packs\Keil\STM32F4xx_DFP\2.8.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include\system_stm32f4xx.h)(0x6AD73CE1)
+F (.\core\vl53l0x_api.c)(0x6AD321E4)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-D__EVAL -gdwarf-4 -O0 -ffunction-sections -Wall -Wextra -Wno-packed -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ./platform -I ./core -I ./core -I ./platform -I ./Lidar_bridge -I ./Wifi-I./RTE/_Target_1-I"C:/Users/Sri Ram/AppData/Local/Arm/Packs/ARM/CMSIS/6.4.0/CMSIS/Core/Include"-I"C:/Users/Sri Ram/AppData/Local/Arm/Packs/Keil/STM32F4xx_DFP/2.8.0/Drivers/CMSIS/Device/ST/STM32F4xx/Include"-D__UVISION_VERSION="543" -DSTM32F401xC -D_RTE_-o ./objects/vl53l0x_api.o -MMD)
+I (core\vl53l0x_api.h)(0x6AD321E4)
+I (core\vl53l0x_api_strings.h)(0x6AD321E4)
+I (core\vl53l0x_def.h)(0x6AD321E4)
+I (core\vl53l0x_device.h)(0x6AD321E4)
+I (platform\vl53l0x_types.h)(0x6AD321E4)
+I (platform\vl53l0x_platform.h)(0x6AD321E4)
+I (platform\vl53l0x_platform_log.h)(0x6AD321E4)
+I (platform\vl53l0x_i2c_platform.h)(0x6AD321E4)
+I (core\vl53l0x_tuning.h)(0x6AD321E4)
+I (core\vl53l0x_interrupt_threshold_settings.h)(0x6AD321E4)
+I (core\vl53l0x_api_core.h)(0x6AD321E4)
+I (core\vl53l0x_api_calibration.h)(0x6AD321E4)
+F (.\core\vl53l0x_api_calibration.c)(0x6AD321E4)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-D__EVAL -gdwarf-4 -O0 -ffunction-sections -Wall -Wextra -Wno-packed -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ./platform -I ./core -I ./core -I ./platform -I ./Lidar_bridge -I ./Wifi-I./RTE/_Target_1-I"C:/Users/Sri Ram/AppData/Local/Arm/Packs/ARM/CMSIS/6.4.0/CMSIS/Core/Include"-I"C:/Users/Sri Ram/AppData/Local/Arm/Packs/Keil/STM32F4xx_DFP/2.8.0/Drivers/CMSIS/Device/ST/STM32F4xx/Include"-D__UVISION_VERSION="543" -DSTM32F401xC -D_RTE_-o ./objects/vl53l0x_api_calibration.o -MMD)
+I (core\vl53l0x_api.h)(0x6AD321E4)
+I (core\vl53l0x_api_strings.h)(0x6AD321E4)
+I (core\vl53l0x_def.h)(0x6AD321E4)
+I (core\vl53l0x_device.h)(0x6AD321E4)
+I (platform\vl53l0x_types.h)(0x6AD321E4)
+I (platform\vl53l0x_platform.h)(0x6AD321E4)
+I (platform\vl53l0x_platform_log.h)(0x6AD321E4)
+I (platform\vl53l0x_i2c_platform.h)(0x6AD321E4)
+I (core\vl53l0x_api_core.h)(0x6AD321E4)
+I (core\vl53l0x_api_calibration.h)(0x6AD321E4)
+F (.\core\vl53l0x_api_core.c)(0x6AD321E4)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-D__EVAL -gdwarf-4 -O0 -ffunction-sections -Wall -Wextra -Wno-packed -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ./platform -I ./core -I ./core -I ./platform -I ./Lidar_bridge -I ./Wifi-I./RTE/_Target_1-I"C:/Users/Sri Ram/AppData/Local/Arm/Packs/ARM/CMSIS/6.4.0/CMSIS/Core/Include"-I"C:/Users/Sri Ram/AppData/Local/Arm/Packs/Keil/STM32F4xx_DFP/2.8.0/Drivers/CMSIS/Device/ST/STM32F4xx/Include"-D__UVISION_VERSION="543" -DSTM32F401xC -D_RTE_-o ./objects/vl53l0x_api_core.o -MMD)
+I (core\vl53l0x_api.h)(0x6AD321E4)
+I (core\vl53l0x_api_strings.h)(0x6AD321E4)
+I (core\vl53l0x_def.h)(0x6AD321E4)
+I (core\vl53l0x_device.h)(0x6AD321E4)
+I (platform\vl53l0x_types.h)(0x6AD321E4)
+I (platform\vl53l0x_platform.h)(0x6AD321E4)
+I (platform\vl53l0x_platform_log.h)(0x6AD321E4)
+I (platform\vl53l0x_i2c_platform.h)(0x6AD321E4)
+I (core\vl53l0x_api_core.h)(0x6AD321E4)
+I (core\vl53l0x_api_calibration.h)(0x6AD321E4)
+F (.\core\vl53l0x_api_ranging.c)(0x6AD321E4)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-D__EVAL -gdwarf-4 -O0 -ffunction-sections -Wall -Wextra -Wno-packed -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ./platform -I ./core -I ./core -I ./platform -I ./Lidar_bridge -I ./Wifi-I./RTE/_Target_1-I"C:/Users/Sri Ram/AppData/Local/Arm/Packs/ARM/CMSIS/6.4.0/CMSIS/Core/Include"-I"C:/Users/Sri Ram/AppData/Local/Arm/Packs/Keil/STM32F4xx_DFP/2.8.0/Drivers/CMSIS/Device/ST/STM32F4xx/Include"-D__UVISION_VERSION="543" -DSTM32F401xC -D_RTE_-o ./objects/vl53l0x_api_ranging.o -MMD)
+I (core\vl53l0x_api.h)(0x6AD321E4)
+I (core\vl53l0x_api_strings.h)(0x6AD321E4)
+I (core\vl53l0x_def.h)(0x6AD321E4)
+I (core\vl53l0x_device.h)(0x6AD321E4)
+I (platform\vl53l0x_types.h)(0x6AD321E4)
+I (platform\vl53l0x_platform.h)(0x6AD321E4)
+I (platform\vl53l0x_platform_log.h)(0x6AD321E4)
+I (platform\vl53l0x_i2c_platform.h)(0x6AD321E4)
+I (core\vl53l0x_api_core.h)(0x6AD321E4)
+F (.\core\vl53l0x_api_strings.c)(0x6AD321E4)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-D__EVAL -gdwarf-4 -O0 -ffunction-sections -Wall -Wextra -Wno-packed -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ./platform -I ./core -I ./core -I ./platform -I ./Lidar_bridge -I ./Wifi-I./RTE/_Target_1-I"C:/Users/Sri Ram/AppData/Local/Arm/Packs/ARM/CMSIS/6.4.0/CMSIS/Core/Include"-I"C:/Users/Sri Ram/AppData/Local/Arm/Packs/Keil/STM32F4xx_DFP/2.8.0/Drivers/CMSIS/Device/ST/STM32F4xx/Include"-D__UVISION_VERSION="543" -DSTM32F401xC -D_RTE_-o ./objects/vl53l0x_api_strings.o -MMD)
+I (core\vl53l0x_api.h)(0x6AD321E4)
+I (core\vl53l0x_api_strings.h)(0x6AD321E4)
+I (core\vl53l0x_def.h)(0x6AD321E4)
+I (core\vl53l0x_device.h)(0x6AD321E4)
+I (platform\vl53l0x_types.h)(0x6AD321E4)
+I (platform\vl53l0x_platform.h)(0x6AD321E4)
+I (platform\vl53l0x_platform_log.h)(0x6AD321E4)
+I (platform\vl53l0x_i2c_platform.h)(0x6AD321E4)
+I (core\vl53l0x_api_core.h)(0x6AD321E4)
+F (.\core\vl53l0x_api.h)(0x6AD321E4)()
+F (.\core\vl53l0x_api_calibration.h)(0x6AD321E4)()
+F (.\core\vl53l0x_api_core.h)(0x6AD321E4)()
+F (.\core\vl53l0x_api_ranging.h)(0x6AD321E4)()
+F (.\core\vl53l0x_api_strings.h)(0x6AD321E4)()
+F (.\core\vl53l0x_def.h)(0x6AD321E4)()
+F (.\core\vl53l0x_device.h)(0x6AD321E4)()
+F (.\core\vl53l0x_interrupt_threshold_settings.h)(0x6AD321E4)()
+F (.\core\vl53l0x_tuning.h)(0x6AD321E4)()
+F (.\platform\vl53l0x_i2c_platform.c)(0x6AD321E4)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-D__EVAL -gdwarf-4 -O0 -ffunction-sections -Wall -Wextra -Wno-packed -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ./platform -I ./core -I ./core -I ./platform -I ./Lidar_bridge -I ./Wifi-I./RTE/_Target_1-I"C:/Users/Sri Ram/AppData/Local/Arm/Packs/ARM/CMSIS/6.4.0/CMSIS/Core/Include"-I"C:/Users/Sri Ram/AppData/Local/Arm/Packs/Keil/STM32F4xx_DFP/2.8.0/Drivers/CMSIS/Device/ST/STM32F4xx/Include"-D__UVISION_VERSION="543" -DSTM32F401xC -D_RTE_-o ./objects/vl53l0x_i2c_platform.o -MMD)
+I (platform\vl53l0x_i2c_platform.h)(0x6AD321E4)
+I (core\vl53l0x_def.h)(0x6AD321E4)
+I (core\vl53l0x_device.h)(0x6AD321E4)
+I (platform\vl53l0x_types.h)(0x6AD321E4)
+I (Lidar_bridge\my_platform.h)(0x6AD321E4)
+I (C:\Users\Sri Ram\AppData\Local\Arm\Packs\Keil\STM32F4xx_DFP\2.8.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include\stm32f4xx.h)(0x6AD73CE1)
+I (C:\Users\Sri Ram\AppData\Local\Arm\Packs\Keil\STM32F4xx_DFP\2.8.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include\stm32f401xc.h)(0x6AD73CE1)
+I (C:\Users\Sri Ram\AppData\Local\Arm\Packs\ARM\CMSIS\6.4.0\CMSIS\Core\Include\core_cm4.h)(0x6AD73518)
+I (C:\Users\Sri Ram\AppData\Local\Arm\Packs\Keil\STM32F4xx_DFP\2.8.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include\system_stm32f4xx.h)(0x6AD73CE1)
+I (core\vl53l0x_api.h)(0x6AD321E4)
+I (core\vl53l0x_api_strings.h)(0x6AD321E4)
+I (platform\vl53l0x_platform.h)(0x6AD321E4)
+I (platform\vl53l0x_platform_log.h)(0x6AD321E4)
+F (.\platform\vl53l0x_i2c_platform.h)(0x6AD321E4)()
+F (.\platform\vl53l0x_i2c_win_serial_comms.c)(0x6AD321E4)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-D__EVAL -gdwarf-4 -O0 -ffunction-sections -Wall -Wextra -Wno-packed -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ./platform -I ./core -I ./core -I ./platform -I ./Lidar_bridge -I ./Wifi-I./RTE/_Target_1-I"C:/Users/Sri Ram/AppData/Local/Arm/Packs/ARM/CMSIS/6.4.0/CMSIS/Core/Include"-I"C:/Users/Sri Ram/AppData/Local/Arm/Packs/Keil/STM32F4xx_DFP/2.8.0/Drivers/CMSIS/Device/ST/STM32F4xx/Include"-D__UVISION_VERSION="543" -DSTM32F401xC -D_RTE_-o ./objects/vl53l0x_i2c_win_serial_comms.o -MMD)
+F (.\platform\vl53l0x_platform.c)(0x6AD321E4)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-D__EVAL -gdwarf-4 -O0 -ffunction-sections -Wall -Wextra -Wno-packed -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ./platform -I ./core -I ./core -I ./platform -I ./Lidar_bridge -I ./Wifi-I./RTE/_Target_1-I"C:/Users/Sri Ram/AppData/Local/Arm/Packs/ARM/CMSIS/6.4.0/CMSIS/Core/Include"-I"C:/Users/Sri Ram/AppData/Local/Arm/Packs/Keil/STM32F4xx_DFP/2.8.0/Drivers/CMSIS/Device/ST/STM32F4xx/Include"-D__UVISION_VERSION="543" -DSTM32F401xC -D_RTE_-o ./objects/vl53l0x_platform.o -MMD)
+I (platform\vl53l0x_platform.h)(0x6AD321E4)
+I (core\vl53l0x_def.h)(0x6AD321E4)
+I (core\vl53l0x_device.h)(0x6AD321E4)
+I (platform\vl53l0x_types.h)(0x6AD321E4)
+I (platform\vl53l0x_platform_log.h)(0x6AD321E4)
+I (platform\vl53l0x_i2c_platform.h)(0x6AD321E4)
+I (core\vl53l0x_api.h)(0x6AD321E4)
+I (core\vl53l0x_api_strings.h)(0x6AD321E4)
+I (Lidar_bridge\my_platform.h)(0x6AD321E4)
+I (C:\Users\Sri Ram\AppData\Local\Arm\Packs\Keil\STM32F4xx_DFP\2.8.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include\stm32f4xx.h)(0x6AD73CE1)
+I (C:\Users\Sri Ram\AppData\Local\Arm\Packs\Keil\STM32F4xx_DFP\2.8.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include\stm32f401xc.h)(0x6AD73CE1)
+I (C:\Users\Sri Ram\AppData\Local\Arm\Packs\ARM\CMSIS\6.4.0\CMSIS\Core\Include\core_cm4.h)(0x6AD73518)
+I (C:\Users\Sri Ram\AppData\Local\Arm\Packs\Keil\STM32F4xx_DFP\2.8.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include\system_stm32f4xx.h)(0x6AD73CE1)
+F (.\platform\vl53l0x_platform.h)(0x6AD321E4)()
+F (.\platform\vl53l0x_platform_log.c)(0x6AD321E4)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-D__EVAL -gdwarf-4 -O0 -ffunction-sections -Wall -Wextra -Wno-packed -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ./platform -I ./core -I ./core -I ./platform -I ./Lidar_bridge -I ./Wifi-I./RTE/_Target_1-I"C:/Users/Sri Ram/AppData/Local/Arm/Packs/ARM/CMSIS/6.4.0/CMSIS/Core/Include"-I"C:/Users/Sri Ram/AppData/Local/Arm/Packs/Keil/STM32F4xx_DFP/2.8.0/Drivers/CMSIS/Device/ST/STM32F4xx/Include"-D__UVISION_VERSION="543" -DSTM32F401xC -D_RTE_-o ./objects/vl53l0x_platform_log.o -MMD)
+I (platform\vl53l0x_i2c_platform.h)(0x6AD321E4)
+I (core\vl53l0x_def.h)(0x6AD321E4)
+I (core\vl53l0x_device.h)(0x6AD321E4)
+I (platform\vl53l0x_types.h)(0x6AD321E4)
+I (platform\vl53l0x_platform_log.h)(0x6AD321E4)
+F (.\platform\vl53l0x_platform_log.h)(0x6AD321E4)()
+F (.\platform\vl53l0x_types.h)(0x6AD321E4)()
+F (.\Lidar_bridge\my_platform.h)(0x6AD321E4)()
+F (.\Lidar_bridge\my_platfrom.c)(0x6AD321E4)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-D__EVAL -gdwarf-4 -O0 -ffunction-sections -Wall -Wextra -Wno-packed -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ./platform -I ./core -I ./core -I ./platform -I ./Lidar_bridge -I ./Wifi-I./RTE/_Target_1-I"C:/Users/Sri Ram/AppData/Local/Arm/Packs/ARM/CMSIS/6.4.0/CMSIS/Core/Include"-I"C:/Users/Sri Ram/AppData/Local/Arm/Packs/Keil/STM32F4xx_DFP/2.8.0/Drivers/CMSIS/Device/ST/STM32F4xx/Include"-D__UVISION_VERSION="543" -DSTM32F401xC -D_RTE_-o ./objects/my_platfrom.o -MMD)
+I (core\vl53l0x_api.h)(0x6AD321E4)
+I (core\vl53l0x_api_strings.h)(0x6AD321E4)
+I (core\vl53l0x_def.h)(0x6AD321E4)
+I (core\vl53l0x_device.h)(0x6AD321E4)
+I (platform\vl53l0x_types.h)(0x6AD321E4)
+I (platform\vl53l0x_platform.h)(0x6AD321E4)
+I (platform\vl53l0x_platform_log.h)(0x6AD321E4)
+I (platform\vl53l0x_i2c_platform.h)(0x6AD321E4)
+I (C:\Users\Sri Ram\AppData\Local\Arm\Packs\Keil\STM32F4xx_DFP\2.8.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include\stm32f4xx.h)(0x6AD73CE1)
+I (C:\Users\Sri Ram\AppData\Local\Arm\Packs\Keil\STM32F4xx_DFP\2.8.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include\stm32f401xc.h)(0x6AD73CE1)
+I (C:\Users\Sri Ram\AppData\Local\Arm\Packs\ARM\CMSIS\6.4.0\CMSIS\Core\Include\core_cm4.h)(0x6AD73518)
+I (C:\Users\Sri Ram\AppData\Local\Arm\Packs\Keil\STM32F4xx_DFP\2.8.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include\system_stm32f4xx.h)(0x6AD73CE1)
+I (Lidar_bridge\my_platform.h)(0x6AD321E4)
+F (RTE/Device/STM32F401CCUx/startup_stm32f401xc.s)(0x6AD321E4)(--target=arm-arm-none-eabi -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -masm=auto  -Wa,armasm,--diag_suppress=A1950W -c-gdwarf-4 -Wa,armasm,--pd,"__EVAL SETA 1"-I./RTE/_Target_1-I"C:/Users/Sri Ram/AppData/Local/Arm/Packs/ARM/CMSIS/6.4.0/CMSIS/Core/Include"-I"C:/Users/Sri Ram/AppData/Local/Arm/Packs/Keil/STM32F4xx_DFP/2.8.0/Drivers/CMSIS/Device/ST/STM32F4xx/Include"-Wa,armasm,--pd,"__UVISION_VERSION SETA 543" -Wa,armasm,--pd,"STM32F401xC SETA 1" -Wa,armasm,--pd,"_RTE_ SETA 1"-o ./objects/startup_stm32f401xc.o)
+F (RTE/Device/STM32F401CCUx/system_stm32f4xx.c)(0x6AD35EE8)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-D__EVAL -gdwarf-4 -O0 -ffunction-sections -Wall -Wextra -Wno-packed -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ./core -I ./platform -I ./Lidar_bridge -I ./Wifi-I./RTE/_Target_1-I"C:/Users/Sri Ram/AppData/Local/Arm/Packs/ARM/CMSIS/6.4.0/CMSIS/Core/Include"-I"C:/Users/Sri Ram/AppData/Local/Arm/Packs/Keil/STM32F4xx_DFP/2.8.0/Drivers/CMSIS/Device/ST/STM32F4xx/Include"-D__UVISION_VERSION="543" -DSTM32F401xC -D_RTE_-o ./objects/system_stm32f4xx.o -MMD)
+I (C:\Users\Sri Ram\AppData\Local\Arm\Packs\Keil\STM32F4xx_DFP\2.8.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include\stm32f4xx.h)(0x6AD73CE1)
+I (C:\Users\Sri Ram\AppData\Local\Arm\Packs\Keil\STM32F4xx_DFP\2.8.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include\stm32f401xc.h)(0x6AD73CE1)
+I (C:\Users\Sri Ram\AppData\Local\Arm\Packs\ARM\CMSIS\6.4.0\CMSIS\Core\Include\core_cm4.h)(0x6AD73518)
+I (C:\Users\Sri Ram\AppData\Local\Arm\Packs\Keil\STM32F4xx_DFP\2.8.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include\system_stm32f4xx.h)(0x6AD73CE1)

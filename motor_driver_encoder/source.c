@@ -1,0 +1,286 @@
+#include "stm32f4xx.h"
+
+/*
+   Driver 1 (TIM4)
+   M1: ENA = PB8  (TIM4_CH3, AF2), IN1 = PB10, IN2 = PB12
+   M2: ENB = PB9  (TIM4_CH4, AF2), IN3 = PB13, IN4 = PB14
+
+   Driver 2 (TIM3)
+   M3: ENA = PA6  (TIM3_CH1, AF2), IN1 = PB0, IN2 = PB1
+   M4: ENB = PA7  (TIM3_CH2, AF2), IN3 = PB5, IN4 = PB6
+
+   Button: PA0  (active low, internal pull-up) -> rover ON / OFF
+   LED:    PC13 (active low)                   -> ON = rover enabled
+
+   Behaviour: press button -> LED on -> move forward 1 s at FULL speed,
+   wait 5 s, then repeat 1 s moves + 5 s waits at HALF speed.
+   Press again -> stop immediately, LED off.
+*/
+
+#define MIN_PULSE_INTERVAL_MS 0U
+#define PWM_MAX      999
+#define FULL_DUTY    800                  // first move
+#define HALF_DUTY    (FULL_DUTY / 2)      // every repeat after that
+#define MOVE_MS      1000
+#define WAIT_MS      5000
+#define DEBOUNCE_MS  200
+
+#define DIR_MASK  ((1U<<10)|(1U<<12)|(1U<<13)|(1U<<14)|(1U<<0)|(1U<<1)|(1U<<5)|(1U<<6))
+
+enum { ST_OFF = 0, ST_MOVE, ST_WAIT };
+
+static volatile uint32_t ms_ticks   = 0;
+static volatile uint32_t last_press = (uint32_t)-1000;
+static volatile uint8_t  toggle_req = 0;     // set by EXTI0 ISR
+static volatile uint8_t time = 0;
+volatile uint32_t pulse_count = 0;
+volatile uint32_t pulse_interval_ms = 0;
+
+static uint32_t last_pulse_ms = 0;
+static uint8_t first_pulse = 1;
+
+
+void SysTick_Handler(void) { 
+	ms_ticks++; 
+	time++;
+	
+}
+
+/* ---------- GPIO helpers ---------- */
+static void gpio_output(GPIO_TypeDef *port, uint8_t pin)
+{
+    port->MODER  &= ~(3U << (pin * 2));
+    port->MODER  |=  (1U << (pin * 2));
+    port->OTYPER &= ~(1U << pin);
+}
+
+static void gpio_af(GPIO_TypeDef *port, uint8_t pin, uint8_t af)
+{
+    port->MODER &= ~(3U << (pin * 2));
+    port->MODER |=  (2U << (pin * 2));
+    port->AFR[pin / 8] &= ~(0xFU << ((pin % 8) * 4));
+    port->AFR[pin / 8] |=  ((uint32_t)af << ((pin % 8) * 4));
+}
+
+static void motor_dir(GPIO_TypeDef *port, uint8_t a, uint8_t b, int forward)
+{
+    if (forward)
+        port->BSRR = (1U << a) | (1U << (b + 16));
+    else
+        port->BSRR = (1U << b) | (1U << (a + 16));
+}
+
+/* ---------- PWM timers (1 kHz) ---------- */
+static void tim3_pwm_init(void)
+{
+    TIM3->PSC = 15;
+    TIM3->ARR = PWM_MAX;
+    TIM3->CCR1 = 0;
+    TIM3->CCR2 = 0;
+
+    TIM3->CCMR1 &= ~(TIM_CCMR1_OC1M | TIM_CCMR1_OC2M);
+    TIM3->CCMR1 |=  (6U << 4)  | TIM_CCMR1_OC1PE;
+    TIM3->CCMR1 |=  (6U << 12) | TIM_CCMR1_OC2PE;
+
+    TIM3->CCER |= TIM_CCER_CC1E | TIM_CCER_CC2E;
+    TIM3->CR1  |= TIM_CR1_ARPE;
+    TIM3->EGR  |= TIM_EGR_UG;
+    TIM3->CR1  |= TIM_CR1_CEN;
+}
+
+static void tim4_pwm_init(void)
+{
+    TIM4->PSC = 15;
+    TIM4->ARR = PWM_MAX;
+    TIM4->CCR3 = 0;
+    TIM4->CCR4 = 0;
+
+    TIM4->CCMR2 &= ~(TIM_CCMR2_OC3M | TIM_CCMR2_OC4M);
+    TIM4->CCMR2 |=  (6U << 4)  | TIM_CCMR2_OC3PE;
+    TIM4->CCMR2 |=  (6U << 12) | TIM_CCMR2_OC4PE;
+
+    TIM4->CCER |= TIM_CCER_CC3E | TIM_CCER_CC4E;
+    TIM4->CR1  |= TIM_CR1_ARPE;
+    TIM4->EGR  |= TIM_EGR_UG;
+    TIM4->CR1  |= TIM_CR1_CEN;
+}
+
+/* ---------- All-motor helpers ---------- */
+static void set_speed(uint32_t duty)
+{
+    TIM4->CCR3 = duty;
+    TIM4->CCR4 = duty;
+    TIM3->CCR1 = duty;
+    TIM3->CCR2 = duty;
+}
+
+static void set_direction_forward(void)
+{
+    motor_dir(GPIOB, 10, 12, 1);
+    motor_dir(GPIOB, 13, 14, 1);
+    motor_dir(GPIOB, 0, 1, 1);
+    motor_dir(GPIOB, 5, 6, 1);
+}
+
+static void motors_stop(void)
+{
+    set_speed(0);
+    GPIOB->BSRR = (DIR_MASK << 16);       // all direction pins low
+}
+
+static void motors_go(uint32_t duty)
+{
+    set_direction_forward();
+    set_speed(duty);
+}
+
+/* ---------- LED (PC13, active low) ---------- */
+static void led_set(uint8_t on)
+{
+    if (on) GPIOC->BSRR = (1U << (13 + 16));
+    else    GPIOC->BSRR = (1U << 13);
+}
+
+/* ---------- Button on PA0 -> EXTI0 (falling edge) ---------- */
+static void button_init(void)
+{
+    RCC->APB2ENR |= RCC_APB2ENR_SYSCFGEN;
+
+    /* PA0: input with pull-up */
+    GPIOA->MODER &= ~(3U << 0);
+    GPIOA->PUPDR &= ~(3U << 0);
+    GPIOA->PUPDR |=  (1U << 0);
+
+    SYSCFG->EXTICR[0] &= ~SYSCFG_EXTICR1_EXTI0;   // EXTI0 -> port A
+
+    EXTI->IMR  |= EXTI_IMR_MR0;
+    EXTI->FTSR |= EXTI_FTSR_TR0;                  // falling edge = press
+    EXTI->RTSR &= ~EXTI_RTSR_TR0;
+
+    NVIC_SetPriority(EXTI0_IRQn, 1);
+    NVIC_EnableIRQ(EXTI0_IRQn);
+}
+
+void EXTI0_IRQHandler(void)
+{
+    if (EXTI->PR & EXTI_PR_PR0)
+    {
+        EXTI->PR = EXTI_PR_PR0;                   // clear pending flag
+
+        if ((ms_ticks - last_press) >= DEBOUNCE_MS)
+        {
+            last_press = ms_ticks;
+            toggle_req = 1;                       // main loop acts on this
+        }
+    }
+}
+
+
+
+void EXTI1_IRQHandler(void)
+{
+    if (EXTI->PR & EXTI_PR_PR1)
+    {
+        EXTI->PR = EXTI_PR_PR1;
+
+        uint32_t now = ms_ticks;
+
+        if (first_pulse)
+        {
+            last_pulse_ms = now;
+            first_pulse = 0;
+            pulse_count++;
+        }
+        else if ((uint32_t)(now - last_pulse_ms) >=
+                 MIN_PULSE_INTERVAL_MS)
+        {
+            pulse_interval_ms = now - last_pulse_ms;
+            last_pulse_ms = now;
+            pulse_count++;
+        }
+    }
+}
+
+void delay_ms(uint32_t ms)
+{
+    uint32_t start = ms_ticks;
+
+    while ((uint32_t)(ms_ticks - start) < ms)
+    {
+        // Wait until the requested time has elapsed
+    }
+}
+
+
+int main(void)
+{
+    RCC->AHB1ENR |= RCC_AHB1ENR_GPIOAEN | RCC_AHB1ENR_GPIOBEN | RCC_AHB1ENR_GPIOCEN;
+    RCC->APB1ENR |= RCC_APB1ENR_TIM3EN  | RCC_APB1ENR_TIM4EN;
+
+    /* PWM pins */
+    gpio_af(GPIOB, 8, 2);
+    gpio_af(GPIOB, 9, 2);
+    gpio_af(GPIOA, 6, 2);
+    gpio_af(GPIOA, 7, 2);
+
+    /* Direction pins */
+    gpio_output(GPIOB, 10); gpio_output(GPIOB, 12);
+    gpio_output(GPIOB, 13); gpio_output(GPIOB, 14);
+    gpio_output(GPIOB, 0);  gpio_output(GPIOB, 1);
+    gpio_output(GPIOB, 5);  gpio_output(GPIOB, 6);
+
+    /* LED */
+    gpio_output(GPIOC, 13);
+    led_set(0);
+
+    tim3_pwm_init();
+    tim4_pwm_init();
+    motors_stop();
+
+    SysTick_Config(SystemCoreClock / 1000);
+    NVIC_SetPriority(SysTick_IRQn, 0);       // above EXTI0 so ms_ticks always runs
+
+    button_init();
+		
+		
+		    /* Enable GPIOA clock */
+    RCC->AHB1ENR |= RCC_AHB1ENR_GPIOAEN;
+
+    /* PA1 as input */
+    GPIOA->MODER &= ~(3U << (1 * 2));
+
+    /* Enable internal pull-up */
+    GPIOA->PUPDR &= ~(3U << (1 * 2));
+    GPIOA->PUPDR |=  (1U << (1 * 2));
+
+    /* Enable SYSCFG clock */
+    RCC->APB2ENR |= RCC_APB2ENR_SYSCFGEN;
+
+    /* Route EXTI1 to GPIOA */
+    SYSCFG->EXTICR[0] &= ~(0xFU << 4);
+
+    /* Unmask EXTI1 */
+    EXTI->IMR |= EXTI_IMR_MR1;
+		
+		EXTI->RTSR &= ~EXTI_RTSR_TR1;	
+		EXTI->FTSR |= EXTI_FTSR_TR1;
+
+    /* Clear pending interrupt */
+    EXTI->PR = EXTI_PR_PR1;
+
+    NVIC_SetPriority(EXTI1_IRQn, 2);
+    NVIC_EnableIRQ(EXTI1_IRQn);
+
+    uint8_t  state     = ST_OFF;
+    uint8_t  first_run = 1;               // first move full speed, rest half
+    uint32_t t_start   = 0;
+		
+    while (1)
+    {
+				
+			motors_go(HALF_DUTY);
+			delay_ms(160);
+			motors_stop();
+			delay_ms(1000);
+    }
+}

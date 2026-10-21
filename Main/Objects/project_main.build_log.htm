@@ -22,16 +22,207 @@ Dialog DLL:      TCM.DLL V1.56.6.0
  
 <h2>Project:</h2>
 C:\Users\pavan\sriram\projects\mapping_rover\Main\project_main.uvprojx
-Project File Date:  10/07/2026
+Project File Date:  10/16/2026
 
 <h2>Output:</h2>
 *** Using Compiler 'V6.24', folder: 'C:\Users\pavan\AppData\Local\Keil_v5\ARM\ARMCLANG\Bin'
-Build target 'Target_1'
+Rebuild target 'Target_1'
+compiling vl53l0x_i2c_win_serial_comms.c...
+compiling vl53l0x_api_ranging.c...
+platform/vl53l0x_platform_log.c(45): warning: unused parameter 'filename' [-Wunused-parameter]
+   45 | int32_t VL53L0X_trace_config(char *filename, uint32_t modules, uint32_t level, uint32_t functions)
+      |                                    ^
+platform/vl53l0x_platform_log.c(45): warning: unused parameter 'modules' [-Wunused-parameter]
+   45 | int32_t VL53L0X_trace_config(char *filename, uint32_t modules, uint32_t level, uint32_t functions)
+      |                                                       ^
+platform/vl53l0x_platform_log.c(45): warning: unused parameter 'level' [-Wunused-parameter]
+   45 | int32_t VL53L0X_trace_config(char *filename, uint32_t modules, uint32_t level, uint32_t functions)
+      |                                                                         ^
+platform/vl53l0x_platform_log.c(45): warning: unused parameter 'functions' [-Wunused-parameter]
+   45 | int32_t VL53L0X_trace_config(char *filename, uint32_t modules, uint32_t level, uint32_t functions)
+      |                                                                                         ^
+platform/vl53l0x_platform_log.c(95): warning: format string is not a string literal (potentially insecure) [-Wformat-security]
+   95 |             fprintf(_tracefile, message);
+      |                                 ^~~~~~~
+platform/vl53l0x_platform_log.c(95): note: treat the string as an argument to avoid this
+   95 |             fprintf(_tracefile, message);
+      |                                 ^
+      |                                 "%s", 
+platform/vl53l0x_platform_log.c(97): warning: format string is not a string literal (potentially insecure) [-Wformat-security]
+   97 |             printf(message);
+      |                    ^~~~~~~
+platform/vl53l0x_platform_log.c(97): note: treat the string as an argument to avoid this
+   97 |             printf(message);
+      |                    ^
+      |                    "%s", 
+6 warnings generated.
+compiling vl53l0x_platform_log.c...
+core/vl53l0x_api_strings.c(422): warning: unused parameter 'Dev' [-Wunused-parameter]
+  422 | VL53L0X_Error VL53L0X_get_limit_check_info(VL53L0X_DEV Dev,
+      |                                                        ^
+1 warning generated.
+compiling vl53l0x_api_strings.c...
+compiling servo.c...
+platform/vl53l0x_i2c_platform.c(94): warning: unused variable 'cmax_devices' [-Wunused-variable]
+   94 |     static const int32_t cmax_devices = 4;
+      |                          ^~~~~~~~~~~~
+platform/vl53l0x_i2c_platform.c(92): warning: unused parameter 'comms_type' [-Wunused-parameter]
+   92 | int32_t VL53L0X_comms_initialise(uint8_t comms_type, uint16_t comms_speed_khz)
+      |                                          ^
+platform/vl53l0x_i2c_platform.c(92): warning: unused parameter 'comms_speed_khz' [-Wunused-parameter]
+   92 | int32_t VL53L0X_comms_initialise(uint8_t comms_type, uint16_t comms_speed_khz)
+      |                                                               ^
+platform/vl53l0x_i2c_platform.c(271): warning: unused parameter 'level' [-Wunused-parameter]
+  271 | int32_t VL53L0X_set_gpio(uint8_t level)
+      |                                  ^
+platform/vl53l0x_i2c_platform.c(284): warning: unused parameter 'plevel' [-Wunused-parameter]
+  284 | int32_t VL53L0X_get_gpio(uint8_t *plevel)
+      |                                   ^
+5 warnings generated.
+compiling vl53l0x_i2c_platform.c...
 compiling main.c...
+Lidar_bridge/my_platfrom.c(314): warning: unused variable 'temp' [-Wunused-variable]
+  314 |         uint8_t temp = I2C1->SR1 | I2C1->SR2;  // read SR1 and SR2 to clear the ADDR bit
+      |                 ^~~~
+Lidar_bridge/my_platfrom.c(335): warning: unused variable 'temp' [-Wunused-variable]
+  335 |                 uint8_t temp = I2C1->SR1 | I2C1->SR2;  // read SR1 and SR2 to clear the ADDR bit.... EV6 condition
+      |                         ^~~~
+Lidar_bridge/my_platfrom.c(354): warning: unused variable 'temp' [-Wunused-variable]
+  354 |                 uint8_t temp = I2C1->SR1 | I2C1->SR2;  // read SR1 and SR2 to clear the ADDR bit
+      |                         ^~~~
+3 warnings generated.
+compiling my_platfrom.c...
+platform/vl53l0x_platform.c(92): warning: unused parameter 'Dev' [-Wunused-parameter]
+   92 | VL53L0X_Error VL53L0X_LockSequenceAccess(VL53L0X_DEV Dev){
+      |                                                      ^
+platform/vl53l0x_platform.c(98): warning: unused parameter 'Dev' [-Wunused-parameter]
+   98 | VL53L0X_Error VL53L0X_UnlockSequenceAccess(VL53L0X_DEV Dev){
+      |                                                        ^
+platform/vl53l0x_platform.c(262): warning: unused parameter 'Dev' [-Wunused-parameter]
+  262 | VL53L0X_Error VL53L0X_PollingDelay(VL53L0X_DEV Dev){
+      |                                                ^
+3 warnings generated.
+compiling vl53l0x_platform.c...
+compiling vl53l0x_api_calibration.c...
+core/vl53l0x_api_core.c(482): warning: unused parameter 'Dev' [-Wunused-parameter]
+  482 | uint32_t VL53L0X_calc_macro_period_ps(VL53L0X_DEV Dev,
+      |                                                   ^
+core/vl53l0x_api_core.c(1505): warning: comparison of integers of different signs: 'int' and 'uint32_t' (aka 'unsigned int') [-Wsign-compare]
+ 1505 |         for (index = 0; index < lut_size; index++) {
+      |                         ~~~~~ ^ ~~~~~~~~
+core/vl53l0x_api_core.c(1512): warning: comparison of integers of different signs: 'int' and 'uint32_t' (aka 'unsigned int') [-Wsign-compare]
+ 1512 |         if (index == lut_size) {
+      |             ~~~~~ ^  ~~~~~~~~
+core/vl53l0x_api_core.c(1768): warning: taking the absolute value of unsigned type 'FixPoint1616_t' (aka 'unsigned int') has no effect [-Wabsolute-value]
+ 1768 |                 xTalkCorrection  = abs(diff1_mcps/diff2_mcps);
+      |                                    ^
+core/vl53l0x_api_core.c(1768): note: remove the call to 'abs' since unsigned values cannot be negative
+ 1768 |                 xTalkCorrection  = abs(diff1_mcps/diff2_mcps);
+      |                                    ^~~
+4 warnings generated.
+compiling vl53l0x_api_core.c...
+core/vl53l0x_api.c(237): warning: unused parameter 'pPowerMode' [-Wunused-parameter]
+  237 |                                    VL53L0X_PowerModes *pPowerMode)
+      |                                                        ^
+core/vl53l0x_api.c(326): warning: unused parameter 'Dev' [-Wunused-parameter]
+  326 | VL53L0X_Error VL53L0X_SetGroupParamHold(VL53L0X_DEV Dev, uint8_t GroupParamHold)
+      |                                                     ^
+core/vl53l0x_api.c(326): warning: unused parameter 'GroupParamHold' [-Wunused-parameter]
+  326 | VL53L0X_Error VL53L0X_SetGroupParamHold(VL53L0X_DEV Dev, uint8_t GroupParamHold)
+      |                                                                  ^
+core/vl53l0x_api.c(338): warning: unused parameter 'Dev' [-Wunused-parameter]
+  338 | VL53L0X_Error VL53L0X_GetUpperLimitMilliMeter(VL53L0X_DEV Dev,
+      |                                                           ^
+core/vl53l0x_api.c(339): warning: unused parameter 'pUpperLimitMilliMeter' [-Wunused-parameter]
+  339 |         uint16_t *pUpperLimitMilliMeter)
+      |                   ^
+core/vl53l0x_api.c(779): warning: unused parameter 'Dev' [-Wunused-parameter]
+  779 | VL53L0X_Error VL53L0X_WaitDeviceBooted(VL53L0X_DEV Dev)
+      |                                                    ^
+core/vl53l0x_api.c(1030): warning: unused parameter 'Dev' [-Wunused-parameter]
+ 1030 | VL53L0X_Error VL53L0X_SetHistogramMode(VL53L0X_DEV Dev,
+      |                                                    ^
+core/vl53l0x_api.c(1031): warning: unused parameter 'HistogramMode' [-Wunused-parameter]
+ 1031 |         VL53L0X_HistogramModes HistogramMode)
+      |                                ^
+core/vl53l0x_api.c(1043): warning: unused parameter 'Dev' [-Wunused-parameter]
+ 1043 | VL53L0X_Error VL53L0X_GetHistogramMode(VL53L0X_DEV Dev,
+      |                                                    ^
+core/vl53l0x_api.c(1044): warning: unused parameter 'pHistogramMode' [-Wunused-parameter]
+ 1044 |         VL53L0X_HistogramModes *pHistogramMode)
+      |                                 ^
+core/vl53l0x_api.c(1203): warning: unused parameter 'Dev' [-Wunused-parameter]
+ 1203 | VL53L0X_Error sequence_step_enabled(VL53L0X_DEV Dev,
+      |                                                 ^
+core/vl53l0x_api.c(1296): warning: unused parameter 'Dev' [-Wunused-parameter]
+ 1296 | VL53L0X_Error VL53L0X_GetNumberOfSequenceSteps(VL53L0X_DEV Dev,
+      |                                                            ^
+core/vl53l0x_api.c(2136): warning: unused parameter 'Dev' [-Wunused-parameter]
+ 2136 | VL53L0X_Error VL53L0X_PerformSingleHistogramMeasurement(VL53L0X_DEV Dev,
+      |                                                                     ^
+core/vl53l0x_api.c(2137): warning: unused parameter 'pHistogramMeasurementData' [-Wunused-parameter]
+ 2137 |         VL53L0X_HistogramMeasurementData_t *pHistogramMeasurementData)
+      |                                             ^
+core/vl53l0x_api.c(2164): warning: unused parameter 'Dev' [-Wunused-parameter]
+ 2164 | VL53L0X_Error VL53L0X_PerformXTalkMeasurement(VL53L0X_DEV Dev,
+      |                                                           ^
+core/vl53l0x_api.c(2165): warning: unused parameter 'TimeoutMs' [-Wunused-parameter]
+ 2165 |         uint32_t TimeoutMs, FixPoint1616_t *pXtalkPerSpad,
+      |                  ^
+core/vl53l0x_api.c(2165): warning: unused parameter 'pXtalkPerSpad' [-Wunused-parameter]
+ 2165 |         uint32_t TimeoutMs, FixPoint1616_t *pXtalkPerSpad,
+      |                                             ^
+core/vl53l0x_api.c(2166): warning: unused parameter 'pAmbientTooHigh' [-Wunused-parameter]
+ 2166 |         uint8_t *pAmbientTooHigh)
+      |                  ^
+core/vl53l0x_api.c(2431): warning: unused parameter 'Dev' [-Wunused-parameter]
+ 2431 | VL53L0X_Error VL53L0X_WaitDeviceReadyForNewMeasurement(VL53L0X_DEV Dev,
+      |                                                                    ^
+core/vl53l0x_api.c(2432): warning: unused parameter 'MaxLoop' [-Wunused-parameter]
+ 2432 |         uint32_t MaxLoop)
+      |                  ^
+core/vl53l0x_api.c(2624): warning: unused parameter 'Dev' [-Wunused-parameter]
+ 2624 | VL53L0X_Error VL53L0X_GetHistogramMeasurementData(VL53L0X_DEV Dev,
+      |                                                               ^
+core/vl53l0x_api.c(2625): warning: unused parameter 'pHistogramMeasurementData' [-Wunused-parameter]
+ 2625 |         VL53L0X_HistogramMeasurementData_t *pHistogramMeasurementData)
+      |                                             ^
+core/vl53l0x_api.c(2664): warning: unused parameter 'Dev' [-Wunused-parameter]
+ 2664 | VL53L0X_Error VL53L0X_SetNumberOfROIZones(VL53L0X_DEV Dev,
+      |                                                       ^
+core/vl53l0x_api.c(2679): warning: unused parameter 'Dev' [-Wunused-parameter]
+ 2679 | VL53L0X_Error VL53L0X_GetNumberOfROIZones(VL53L0X_DEV Dev,
+      |                                                       ^
+core/vl53l0x_api.c(2692): warning: unused parameter 'Dev' [-Wunused-parameter]
+ 2692 | VL53L0X_Error VL53L0X_GetMaxNumberOfROIZones(VL53L0X_DEV Dev,
+      |                                                          ^
+core/vl53l0x_api.c(2875): warning: unused parameter 'DeviceMode' [-Wunused-parameter]
+ 2875 |         VL53L0X_DeviceModes DeviceMode, FixPoint1616_t ThresholdLow,
+      |                             ^
+core/vl53l0x_api.c(2901): warning: unused parameter 'DeviceMode' [-Wunused-parameter]
+ 2901 |         VL53L0X_DeviceModes DeviceMode, FixPoint1616_t *pThresholdLow,
+      |                             ^
+core/vl53l0x_api.c(2963): warning: unused parameter 'InterruptMask' [-Wunused-parameter]
+ 2963 |                                          uint32_t InterruptMask)
+      |                                                   ^
+core/vl53l0x_api.c(3012): warning: unused parameter 'Dev' [-Wunused-parameter]
+ 3012 | VL53L0X_Error VL53L0X_EnableInterruptMask(VL53L0X_DEV Dev,
+      |                                                       ^
+core/vl53l0x_api.c(3013): warning: unused parameter 'InterruptMask' [-Wunused-parameter]
+ 3013 |                                           uint32_t InterruptMask)
+      |                                                    ^
+30 warnings generated.
+compiling vl53l0x_api.c...
+compiling system_stm32f4xx.c...
+assembling startup_stm32f401xc.s...
 linking...
-Program Size: Code=23196 RO-data=436 RW-data=1088 ZI-data=1712  
-FromELF: creating hex file...
-".\Objects\project_main.axf" - 0 Error(s), 0 Warning(s).
+.\Objects\project_main.axf: Error: L6218E: Undefined symbol request (referred from servo.o).
+.\Objects\project_main.axf: Error: L6218E: Undefined symbol response_error (referred from servo.o).
+.\Objects\project_main.axf: Error: L6218E: Undefined symbol response (referred from servo.o).
+Not enough information to list image symbols.
+Not enough information to list load addresses in the image map.
+Finished: 2 information, 0 warning and 3 error messages.
+".\Objects\project_main.axf" - 3 Error(s), 52 Warning(s).
 
 <h2>Software Packages used:</h2>
 
@@ -40,11 +231,6 @@ Package Vendor: ARM
                 ARM::CMSIS@6.3.0
                 CMSIS (Common Microcontroller Software Interface Standard)
    * Component: CORE Version: 6.2.0
-
-Package Vendor: Keil
-                https://www.keil.com/pack/Keil.STM32F4xx_DFP.3.1.1.pack
-                Keil::STM32F4xx_DFP@3.1.1
-                STMicroelectronics STM32F4 Series Device Support
 
 Package Vendor: Keil
                 http://www.keil.com/pack/Keil.STM32F4xx_DFP.2.8.0.pack
@@ -62,12 +248,13 @@ Package Vendor: Keil
    * Component: ARM::CMSIS:CORE@6.2.0
 
    * Component: Keil::Device:Startup@2.4.2
-      Include file:  Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f4xx.h
-      Source file:   MDK/Device/Source/ARM/STM32F401xx_OPT.s
       Source file:   MDK/Device/Source/ARM/STM32F4xx_OTP.s
       Source file:   Drivers/CMSIS/Device/ST/STM32F4xx/Source/Templates/arm/startup_stm32f401xc.s
+      Source file:   MDK/Device/Source/ARM/STM32F401xx_OPT.s
+      Include file:  Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f4xx.h
       Source file:   Drivers/CMSIS/Device/ST/STM32F4xx/Source/Templates/system_stm32f4xx.c
-Build Time Elapsed:  00:00:01
+Target not created.
+Build Time Elapsed:  00:00:02
 </pre>
 </body>
 </html>
